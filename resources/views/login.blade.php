@@ -10,7 +10,7 @@
 <form id="loginForm">
     <input type="email" id="email" placeholder="Email"><br><br>
     <input type="password" id="password" placeholder="Mot de passe"><br><br>
-
+    <p id="error" style="color:red;"></p>
     <button type="submit">Se connecter</button>
 </form>
 

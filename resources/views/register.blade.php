@@ -14,6 +14,8 @@
   <button type="submit">S'inscrire</button>
 </form>
 
+<p id="error" style="color:red;"></p>
+
 <script src="/js/register.js"></script>
 
 </body>

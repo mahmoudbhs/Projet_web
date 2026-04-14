@@ -9,9 +9,9 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reviews', [ReviewController::class, 'index']);
-    Route::get('/reviews/{reviews}', [ReviewController::class, 'show']);
+    Route::get('/reviews/{review}', [ReviewController::class, 'show']);
     Route::post('/reviews', [ReviewController::class, 'store']);
     Route::put('/reviews/{review}', [ReviewController::class, 'update']);
-    Route::patch('/reviews/{reviews}', [ReviewController::class, 'update']);
-    Route::delete('/reviews/{reviews}', [ReviewController::class, 'destroy']);
+    Route::patch('/reviews/{review}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
 });

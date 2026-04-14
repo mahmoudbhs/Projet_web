@@ -6,4 +6,4 @@ Route::view('/', 'welcome');
 Route::view('/login', 'login');
 Route::view('/register', 'register');
 Route::view('/reviews', 'reviews');
-Route::view('/admin', 'reviews-console');
+Route::view('/admin', 'admin');

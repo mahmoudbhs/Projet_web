@@ -7,37 +7,45 @@ use App\Models\User;
 
 class ReviewPolicy
 {
-    public function viewAny(User $user): bool
+    // 🔹 Voir toutes les reviews
+    public function viewAny(User $user)
     {
-        return $user->role === 'admin';
+        return true;
     }
 
-    public function view(User $user, Review $review): bool
+    // 🔹 Voir une review
+    public function view(User $user, Review $review)
     {
-        return $user->role === 'admin';
+        return true;
     }
 
-    public function create(User $user): bool
+    // 🔹 Créer une review
+    public function create(User $user)
     {
-        return $user->role === 'user';
+        return true;
     }
 
-    public function update(User $user, Review $review): bool
+    // 🔹 Modifier une review
+    public function update(User $user, Review $review)
     {
-        return $user->id === $review->user_id || $user->role === 'admin';
+        // admin OU propriétaire
+        return $user->role === 'admin' || $user->id === $review->user_id;
     }
 
-    public function delete(User $user, Review $review): bool
+    // 🔹 Supprimer une review
+    public function delete(User $user, Review $review)
     {
-        return $user->id === $review->user_id || $user->role === 'admin';
+        return $user->role === 'admin' || $user->id === $review->user_id;
     }
 
-    public function restore(User $user, Review $review): bool
+    // 🔹 Restaurer (optionnel)
+    public function restore(User $user, Review $review)
     {
         return false;
     }
 
-    public function forceDelete(User $user, Review $review): bool
+    // 🔹 Supprimer définitivement (optionnel)
+    public function forceDelete(User $user, Review $review)
     {
         return $user->role === 'admin';
     }

@@ -1,14 +1,20 @@
 document.getElementById("registerForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    console.log("register click");
+
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const password_confirmation = document.getElementById("password_confirmation").value;
+    const errorEl = document.getElementById("error");
 
-    const res = await fetch("/api/register", {
+    const response = await fetch("/api/register", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
         body: JSON.stringify({
             name,
             email,
@@ -17,12 +23,16 @@ document.getElementById("registerForm").addEventListener("submit", async (e) => 
         })
     });
 
-    const data = await res.json();
-    console.log(data);
+    const data = await response.json();
+    console.log(response.status, data);
 
-    if (data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.user.role);
-        window.location.href = data.user.role === "admin" ? "/admin" : "/reviews";
+    // ❌ erreur
+    if (!response.ok) {
+        errorEl.innerText = "Erreur inscription";
+        return;
     }
+
+    // ✅ succès
+    alert("Compte créé !");
+    window.location.href = "/login";
 });
