@@ -48,13 +48,21 @@ async function loadReviews() {
     return;
    }
 
+    const user = JSON.parse(localStorage.getItem("user"));
+
+     
     document.getElementById("reviewsList").innerHTML =
-        data.map(r => `
-            <p>
-                <b>${r.user.name}</b> : ${r.content}
-                <button onclick="deleteReview(${r.id})">Delete</button>
-            </p>
-        `).join("");
+      data.map(r => `
+         <p>
+             <b>${r.user.name}</b> : ${r.content}
+
+             ${
+                user && (user.role === "admin" || user.id === r.user.id)
+                ? `<button onclick="deleteReview(${r.id})">Delete</button>`
+                : ""
+             }
+          </p>
+     `).join("");
 }
 
 //Supprimer
@@ -68,6 +76,10 @@ async function deleteReview(id) {
     });
 
     loadReviews();
+}
+function logout() {
+    localStorage.clear();
+    window.location.href = "/login";
 }
 
 //au chargement

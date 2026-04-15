@@ -8,7 +8,7 @@ use App\Http\Requests\StoreReviewRequest;
 
 class ReviewController extends Controller
 {
-    // 🔹 GET /api/reviews
+    //GET /api/reviews
     public function index()
     {
         $this->authorize('viewAny', Review::class);
@@ -16,7 +16,7 @@ class ReviewController extends Controller
         return Review::with('user')->latest()->get();
     }
 
-    // 🔹 POST /api/reviews
+    //POST /api/reviews
     public function store(StoreReviewRequest $request)
     {
         $this->authorize('create', Review::class);
@@ -26,14 +26,14 @@ class ReviewController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        // 🔥 Analyse simple
+        //Analyse simple
         $sentiment = $this->analyze($review->content);
         $review->update(['sentiment' => $sentiment]);
 
         return response()->json($review->load('user'), 201);
     }
 
-    // 🔹 GET /api/reviews/{review}
+    //GET /api/reviews/{review}
     public function show(Review $review)
     {
         $this->authorize('view', $review);
@@ -41,7 +41,7 @@ class ReviewController extends Controller
         return $review->load('user');
     }
 
-    // 🔹 PUT /api/reviews/{review}
+    // PUT /api/reviews/{review}
     public function update(Request $request, Review $review)
     {
         $this->authorize('update', $review);
@@ -57,7 +57,7 @@ class ReviewController extends Controller
         return response()->json($review->load('user'));
     }
 
-    // 🔹 DELETE /api/reviews/{review}
+    //DELETE /api/reviews/{review}
     public function destroy(Review $review)
     {
         $this->authorize('delete', $review);
@@ -69,7 +69,7 @@ class ReviewController extends Controller
         ]);
     }
 
-    // 🔹 Analyse simple (IA basique)
+    //Analyse simple (IA basique)
     private function analyze($text)
     {
         $text = strtolower($text);

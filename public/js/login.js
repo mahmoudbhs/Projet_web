@@ -32,6 +32,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.user.role);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
         if (data.user.role === "admin") {
             window.location.href = "/admin";
