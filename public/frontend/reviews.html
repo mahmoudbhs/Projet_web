@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avis Clients – AvisIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .review-card { animation: fadeInUp 0.35s ease both; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spin { animation: spin 0.8s linear infinite; }
+        /* Scrollbar discrète */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 99px; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+
+    <!-- Toast container -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Navbar -->
+    <header class="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="/frontend/reviews.html" class="flex items-center gap-2.5">
+                <div class="w-8 h-8 bg-gradient-to-br from-violet-500 to-violet-700 rounded-lg flex items-center justify-center shadow-md shadow-violet-600/30">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                </div>
+                <span class="font-bold text-white text-lg">AvisIA</span>
+            </a>
+
+            <!-- Nav droite -->
+            <div class="flex items-center gap-3">
+                <!-- Lien stats -->
+                <a href="/frontend/stats.html"
+                   class="flex items-center gap-1.5 text-slate-400 hover:text-violet-400 text-sm font-medium transition-colors px-3 py-1.5 rounded-lg hover:bg-violet-500/10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Dashboard
+                </a>
+
+                <!-- User badge -->
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-lg border border-slate-700">
+                    <div id="userAvatar" class="w-6 h-6 rounded-full bg-violet-600/30 border border-violet-500/40 flex items-center justify-center text-violet-400 text-xs font-bold">?</div>
+                    <div class="hidden sm:block">
+                        <p id="userName" class="text-slate-200 text-sm font-medium leading-none">...</p>
+                        <p id="userRole" class="text-slate-500 text-xs leading-none mt-0.5"></p>
+                    </div>
+                </div>
+
+                <!-- Logout -->
+                <button onclick="logout()"
+                    class="flex items-center gap-1.5 text-slate-400 hover:text-red-400 text-sm font-medium transition-colors px-2 py-1.5 rounded-lg hover:bg-red-500/10"
+                    title="Déconnexion">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    <span class="hidden sm:inline">Déconnexion</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+
+        <!-- Formulaire nouveau avis -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
+            <h2 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4v16m8-8H4"/>
+                </svg>
+                Déposer un avis
+            </h2>
+            <form id="reviewForm">
+                <textarea id="content" rows="4" required placeholder="Partagez votre expérience... (l'IA analysera automatiquement le sentiment)"
+                    class="w-full bg-slate-950/60 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-600
+                           focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none transition-all text-sm leading-relaxed"
+                    oninput="updateCharCount(this)"></textarea>
+                <div class="flex items-center justify-between mt-3">
+                    <span id="charCount" class="text-xs text-slate-600">0 caractère</span>
+                    <button type="submit" id="submitReviewBtn"
+                        class="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-violet-700
+                               hover:from-violet-500 hover:to-violet-600 text-white text-sm font-semibold
+                               px-5 py-2.5 rounded-xl transition-all duration-200 shadow-md shadow-violet-600/20
+                               hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none">
+                        <svg id="submitSpinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        <svg id="submitIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Analyser & Publier
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Titre liste -->
+        <div class="flex items-center justify-between">
+            <h3 class="text-base font-semibold text-slate-300">
+                Tous les avis
+            </h3>
+            <button onclick="loadReviews()" class="text-slate-500 hover:text-slate-300 text-xs transition-colors flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Rafraîchir
+            </button>
+        </div>
+
+        <!-- Liste des avis -->
+        <div id="reviewsList" class="space-y-4">
+            <!-- État de chargement initial -->
+            <div class="flex items-center justify-center py-16">
+                <div class="flex flex-col items-center gap-3">
+                    <svg class="w-8 h-8 text-violet-500 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                    </svg>
+                    <p class="text-slate-500 text-sm">Chargement des avis...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/reviews.js"></script>
+</body>
+</html>

@@ -7,3 +7,4 @@ Route::view('/login', 'login');
 Route::view('/register', 'register');
 Route::view('/reviews', 'reviews');
 Route::view('/admin', 'admin');
+Route::view('/stats', 'stats');

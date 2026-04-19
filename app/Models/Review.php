@@ -19,7 +19,7 @@ class Review extends Model
 
     protected $casts = [
         'topics' => 'array',
-        'score'  => 'float',
+        'score'  => 'integer',
     ];
 
     public function user()

@@ -7,14 +7,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreReviewRequest extends FormRequest
 {
-    public function rules()
-   {
-      return [
-          'content' => 'required|string',
+    public function rules(): array
+    {
+        return [
+            'content' => 'required|string|min:3',
         ];
-   }
-   public function authorize()
-   {
-       return true;
+    }
+
+    public function authorize(): bool
+    {
+        return true;
     }
 }
