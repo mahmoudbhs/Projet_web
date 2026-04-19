@@ -79,4 +79,17 @@ class ReviewController extends Controller
 
         return 'neutre';
     }
+    
+    public function admin()
+    {
+      $totalReviews = Review::count();
+      $todayReviews = Review::whereDate('created_at', today())->count();
+      $flaggedReviews = Review::where('status', 'flagged')->count();
+
+      return view('admin', compact(
+        'totalReviews',
+        'todayReviews',
+        'flaggedReviews'
+      ));
+    }
 }
