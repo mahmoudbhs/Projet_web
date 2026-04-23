@@ -21,7 +21,7 @@ class AuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role' => 'user',
+            'role' => $this->resolveRole($data['email']),
         ]);
 
         return response()->json([
@@ -57,5 +57,23 @@ class AuthController extends Controller
         }
 
         return response()->json(['message' => 'Logged out']);
+    }
+
+    private function resolveRole(string $email): string
+    {
+        return in_array(strtolower($email), $this->adminEmails(), true) ? 'admin' : 'user';
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function adminEmails(): array
+    {
+        return [
+            'myrasaid@admin.com',
+            'mahmoudbhs@admin.com',
+            'abdeldjalil@admin.com',
+            'wilem@admin.com',
+        ];
     }
 }

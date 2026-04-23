@@ -6,5 +6,5 @@ Route::view('/', 'welcome');
 Route::view('/login', 'login');
 Route::view('/register', 'register');
 Route::view('/reviews', 'reviews');
-Route::view('/admin', 'admin');
+Route::redirect('/admin', '/frontend/admin.html');
 Route::view('/stats', 'stats');

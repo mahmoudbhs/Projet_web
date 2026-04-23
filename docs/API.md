@@ -2,11 +2,16 @@
 
 Base URL: `http://127.0.0.1:8000/api`
 
+Authentification: Bearer token via Laravel Sanctum.
+
 ## Auth
 
 ### Register
+
 - `POST /register`
-- Body:
+
+Body:
+
 ```json
 {
   "name": "Alice",
@@ -16,9 +21,32 @@ Base URL: `http://127.0.0.1:8000/api`
 }
 ```
 
+Remarques:
+
+- le role est attribue automatiquement par le backend
+- si l'email appartient a la liste admin autorisee, l'utilisateur est cree avec le role `admin`
+- sinon il est cree avec le role `user`
+
+Exemple de reponse:
+
+```json
+{
+  "token": "1|exampletoken",
+  "user": {
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com",
+    "role": "user"
+  }
+}
+```
+
 ### Login
+
 - `POST /login`
-- Body:
+
+Body:
+
 ```json
 {
   "email": "alice@example.com",
@@ -26,20 +54,49 @@ Base URL: `http://127.0.0.1:8000/api`
 }
 ```
 
+Exemple de reponse:
+
+```json
+{
+  "token": "2|exampletoken",
+  "user": {
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com",
+    "role": "user"
+  }
+}
+```
+
 ### Logout
-- `POST /logout` (Bearer token required)
+
+- `POST /logout`
+- Bearer token requis
+
+Exemple de reponse:
+
+```json
+{
+  "message": "Logged out"
+}
+```
 
 ## AI
 
-### Analyze text (mandatory)
+### Analyze text
+
 - `POST /analyze`
-- Body:
+
+Body:
+
 ```json
 {
   "text": "Livraison rapide mais prix eleve"
 }
 ```
-- Response:
+
+Exemple de reponse:
+
 ```json
 {
   "sentiment": "neutral",
@@ -48,40 +105,85 @@ Base URL: `http://127.0.0.1:8000/api`
 }
 ```
 
-## Reviews (Bearer token required)
+## Reviews
+
+Toutes les routes suivantes demandent un Bearer token.
 
 ### Create review
+
 - `POST /reviews`
-- Body:
+
+Body:
+
 ```json
 {
   "content": "Service parfait et livraison rapide"
 }
 ```
 
+Exemple de reponse:
+
+```json
+{
+  "id": 1,
+  "content": "Service parfait et livraison rapide",
+  "user_id": 1,
+  "sentiment": "positive",
+  "score": 90,
+  "topics": ["delivery", "support"],
+  "user": {
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com",
+    "role": "user"
+  }
+}
+```
+
 ### List reviews
+
 - `GET /reviews`
 
+Remarque:
+
+- la liste contient aussi la relation `user`
+
 ### Get one review
+
 - `GET /reviews/{id}`
 
 ### Update review
+
 - `PUT /reviews/{id}`
-- Body:
+- `PATCH /reviews/{id}`
+
+Body:
+
 ```json
 {
   "content": "Nouveau texte avis"
 }
 ```
 
+Remarque:
+
+- l'analyse IA est relancee automatiquement lors de la mise a jour
+
 ### Delete review
+
 - `DELETE /reviews/{id}`
 
-## Dashboard (Bearer token required)
+Remarque:
 
-### Global statistics
+- suppression autorisee pour l'admin ou le proprietaire de l'avis
+
+## Dashboard
+
 - `GET /dashboard`
-- Response:
+- Bearer token requis
+
+Exemple de reponse:
+
 ```json
 {
   "positive_percent": 55.5,
@@ -92,6 +194,48 @@ Base URL: `http://127.0.0.1:8000/api`
     { "topic": "quality", "count": 7 }
   ],
   "average_score": 67.3,
-  "recent_reviews": []
+  "recent_reviews": [
+    {
+      "id": 1,
+      "content": "Service parfait",
+      "sentiment": "positive",
+      "score": 95,
+      "topics": ["support", "quality"],
+      "user": {
+        "id": 1,
+        "name": "Alice",
+        "email": "alice@example.com",
+        "role": "user"
+      }
+    }
+  ]
 }
 ```
+
+## Roles admin
+
+Emails admin reconnus a l'inscription:
+
+- `myrasaid@admin.com`
+- `mahmoudbhs@admin.com`
+- `abdeldjalil@admin.com`
+- `wilem@admin.com`
+
+## Frontend statique
+
+Pages disponibles:
+
+- `/frontend/login.html`
+- `/frontend/register.html`
+- `/frontend/reviews.html`
+- `/frontend/stats.html`
+- `/frontend/admin.html`
+
+Redirection frontend actuelle:
+
+- un `admin` est redirige vers `/frontend/admin.html`
+- un `user` est redirige vers `/frontend/reviews.html`
+
+Note:
+
+- la route web `/admin` redirige aussi vers `/frontend/admin.html`
